@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.crawler" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.crawler/src/main/java/spider/application/crawler/common/utils/DateUtils.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/spider.crawler/src/main/java/spider/application/crawler/model/UcsmySite.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/spider.crawler/src/test/java/spider/application/crawler/main/SpiderListStarterTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.data" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.dataapi" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.ocr" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.proxy" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.quartz" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spider.regedit" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

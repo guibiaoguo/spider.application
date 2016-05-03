@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/spider.application.iml" filepath="$PROJECT_DIR$/spider.application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.crawler/spider.crawler.iml" filepath="$PROJECT_DIR$/spider.crawler/spider.crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.data/spider.data.iml" filepath="$PROJECT_DIR$/spider.data/spider.data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.dataapi/spider.dataapi.iml" filepath="$PROJECT_DIR$/spider.dataapi/spider.dataapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.ocr/spider.ocr.iml" filepath="$PROJECT_DIR$/spider.ocr/spider.ocr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.proxy/spider.proxy.iml" filepath="$PROJECT_DIR$/spider.proxy/spider.proxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.quartz/spider.quartz.iml" filepath="$PROJECT_DIR$/spider.quartz/spider.quartz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spider.regedit/spider.regedit.iml" filepath="$PROJECT_DIR$/spider.regedit/spider.regedit.iml" />
+    </modules>
+  </component>
+</project>
