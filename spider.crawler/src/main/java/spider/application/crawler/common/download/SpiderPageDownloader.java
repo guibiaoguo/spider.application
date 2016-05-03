@@ -90,6 +90,7 @@ public class SpiderPageDownloader extends AbstractDownloader {
             if (statusAccept(acceptStatCode, statusCode)) {
                 Page page = handleResponse(request, charset, httpResponse, task);
                 page.putField("$httpclient",getHttpClient(site));
+
                 onSuccess(request);
                 return page;
             } else {

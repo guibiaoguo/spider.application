@@ -1,9 +1,6 @@
 package spider.application.crawler.main;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import org.junit.Test;
 import spider.application.crawler.main.spider.SpiderConfigCrawlerService;
 import us.codecraft.webmagic.utils.HttpConstant;
@@ -31,18 +28,23 @@ public class SpiderListStarterTest {
         multimap.put("url","http://www.mayidaili.com/free/fiveport/");
         multimap.put("method", HttpConstant.Method.GET);
         multimap.put("contentType","0");
-        for (Integer i = 1; i < 9; i++) {
-            multimap.put("request", ImmutableMap.of("",i.toString()));
-        }
-//        multimap.put("request", ImmutableMap.of("","2"));
-//        multimap.put("request", ImmutableMap.of("","3"));
-//        multimap.put("request", ImmutableMap.of("","4"));
-//        multimap.put("request", ImmutableMap.of("","5"));
-//        multimap.put("request", ImmutableMap.of("","6"));
-        multimap.put("targetTasks", ImmutableMap.of("express","xpath(//div[@class=\"col-md-9\"]//tr/td[1]/text());","key","ip","table","tb_mayidaili"));
+//        for (Integer i = 1; i < 753; i++) {
+//            multimap.put("request", ImmutableMap.of("",i.toString()));
+//        }
+        multimap.put("request", ImmutableMap.of("","1"));
+        multimap.put("request", ImmutableMap.of("","2"));
+        multimap.put("request", ImmutableMap.of("","3"));
+        multimap.put("request", ImmutableMap.of("","4"));
+        multimap.put("request", ImmutableMap.of("","5"));
+        multimap.put("request", ImmutableMap.of("","6"));
+        multimap.put("request", ImmutableMap.of("","7"));
+        multimap.put("request", ImmutableMap.of("","8"));
+        multimap.put("module","//div[@class=\"col-md-9\"]//tbody/tr");
+        List targetTasks = Lists.newArrayList();
+        multimap.put("targetTasks", ImmutableMap.of("express","xpath(//td[1]/text());","key","ip","table","tb_mayidaili"));
 //        multimap.put("targetTasks", ImmutableMap.of("express","xpath(//*[@id=\"list\"]/table/tbody/tr/td[2]/text());","key","port","table","tb_kuaidaili"));
 //        multimap.put("targetTasks", ImmutableMap.of("express","css(#listnav li:has(a.active)+li>a$$text);","key",""));
-        multimap.put("targetTasks", ImmutableMap.of("express","xpath(//div[@class=\"col-md-9\"]//tr/td[2]/img/@data-uri);saveFile(port$$.png);","key","$file","table","tb_mayidaili"));
+        multimap.put("targetTasks", ImmutableMap.of("express","xpath(//td[2]/img/@data-uri);saveFile(port$$.png);","key","$file","table","tb_mayidaili"));
         spiderListStarter.batchFetch(UUID.randomUUID().toString(),multimap);
 
     }
