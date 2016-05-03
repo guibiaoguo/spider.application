@@ -1,4 +1,4 @@
-package spider.application.ocr.util;
+package spider.application.ocr.main;
 
 /**
  * Created by Administrator on 2015/11/24.
@@ -48,7 +48,7 @@ public class OCRHelper {
 //        } else {
 //            cmd.add(tessPath + "\\tesseract");
 //        }
-        cmd.add(tessPath + "\\tesseract");
+        cmd.add("D:\\Program Files\\Tesseract-OCR" + "\\tesseract");
         cmd.add("");
         cmd.add(outputFile.getName());
         cmd.add(LANG_OPTION);
@@ -106,7 +106,7 @@ public class OCRHelper {
     public static void main(String[] args) {
         try {
 
-            File testDataDir = new File("d:/2345/tmp2");
+            File testDataDir = new File("E:\\ideaworkspace\\spider.application\\spider.crawler\\target\\test-classes\\20160502\\tmp1");
             System.out.println(testDataDir.listFiles().length);
             int i = 0;
             int k=0;

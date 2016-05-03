@@ -28,13 +28,13 @@ public class SpiderListStarterTest {
         multimap.put("timeOut",0);
         multimap.put("userAgent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36");
         multimap.put("thread","1");
-        multimap.put("url","http://www.mayidaili.com/free/");
+        multimap.put("url","http://www.mayidaili.com/free/fiveport/");
         multimap.put("method", HttpConstant.Method.GET);
         multimap.put("contentType","0");
-//        for (Integer i = 1; i < 753; i++) {
-//            multimap.put("request", ImmutableMap.of("",i.toString()));
-//        }
-        multimap.put("request", ImmutableMap.of("","2"));
+        for (Integer i = 1; i < 9; i++) {
+            multimap.put("request", ImmutableMap.of("",i.toString()));
+        }
+//        multimap.put("request", ImmutableMap.of("","2"));
 //        multimap.put("request", ImmutableMap.of("","3"));
 //        multimap.put("request", ImmutableMap.of("","4"));
 //        multimap.put("request", ImmutableMap.of("","5"));
