@@ -1,4 +1,4 @@
-package spider.application.ocr.main;
+package spider.application.ocr.util;
 
 /**
  * Created by Administrator on 2015/11/24.
@@ -14,11 +14,11 @@ public class OCRHelper {
     private final String LANG_OPTION = "-l";
     private final String PSM = "-psm";
     private final String EOL = System.getProperty("line.separator");
-    private String language = "num";
+    private String language = "eng";
     /**
      * 文件位置我防止在，项目同一路径
      */
-    private String tessPath = new File("tesseract").getAbsolutePath();
+    private String tessPath = new File("D:\\Program Files\\Tesseract-OCR").getAbsolutePath();
 
     public OCRHelper() {
 
@@ -48,7 +48,7 @@ public class OCRHelper {
 //        } else {
 //            cmd.add(tessPath + "\\tesseract");
 //        }
-        cmd.add("D:\\Program Files\\Tesseract-OCR" + "\\tesseract");
+        cmd.add(tessPath + "\\tesseract");
         cmd.add("");
         cmd.add(outputFile.getName());
         cmd.add(LANG_OPTION);
@@ -106,7 +106,7 @@ public class OCRHelper {
     public static void main(String[] args) {
         try {
 
-            File testDataDir = new File("E:\\workspace\\spider.application\\spider.crawler\\target\\test-classes\\20160504\\tmp1");
+            File testDataDir = new File("E:\\workspace\\spider.application\\spider.crawler\\target\\test-classes\\20160503\\tmp1");
             System.out.println(testDataDir.listFiles().length);
             int i = 0;
             int k=0;
@@ -118,16 +118,15 @@ public class OCRHelper {
             for (File file : testDataDir.listFiles()) {
                 i++;
                 String recognizeText = new OCRHelper().recognizeText(file).trim()
-//                        .replaceAll("a","8")
-//                        .replaceAll("n","0")
-//                        .replaceAll("e","9")
-//                        .replaceAll("t","1")
-//                        .replaceAll("ﬁ","8")
-//                        .replaceAll("s","6")
-//                        .replaceAll("u","0")
-//                        .replaceAll("o","0")
-//                        .replaceAll("z","2")
-//                        .replaceAll("«","1")
+                        .replaceAll("a","8")
+                        .replaceAll("n","0")
+                        .replaceAll("e","9")
+                        .replaceAll("t","1")
+                        .replaceAll("ﬁ","8")
+                        .replaceAll("s","6")
+                        .replaceAll("u","0")
+                        .replaceAll("o","0")
+                        .replaceAll("z","2")
                         ;
                 System.out.print("FiLE:" + file.getName() + " :" + recognizeText + "\n");
 //                matcher = pattern.matcher(recognizeText);

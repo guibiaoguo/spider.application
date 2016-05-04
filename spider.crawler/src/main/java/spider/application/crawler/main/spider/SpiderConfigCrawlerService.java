@@ -1,8 +1,12 @@
 package spider.application.crawler.main.spider;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.io.Files;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import us.codecraft.webmagic.pipeline.ConsolePipeline;
 import us.codecraft.webmagic.pipeline.Pipeline;
 import us.codecraft.webmagic.utils.HttpConstant;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -60,9 +66,22 @@ public class SpiderConfigCrawlerService implements IBackListSearchService{
                 .setSleepTime(Integer.parseInt(sleepTime))
                 .setTimeOut(Integer.parseInt(timeOut))
                 .setUserAgent(userAgent)
-                .setHttpProxy(new HttpHost("127.0.0.1",8888))
                 ;
 //        site.getHttpProxyPool().enable(true);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String line = Files.readFirstLine(new File("E:\\workspace\\spider.application\\spider.crawler\\target\\test-classes\\20160504\\201605041705"), Charsets.UTF_8);
+            Map<String,List<Map>> proxys = objectMapper.readValue(line,Map.class);
+            List<String[]> proxyList = Lists.newArrayList();
+            for (Map proxy:proxys.get("tb_mayidaili")) {
+                if(StringUtils.isNotEmpty(proxy.get("port").toString()));
+//                    proxyList.add(new String[]{proxy.get("ip").toString().trim(),proxy.get("port").toString().trim()});
+            }
+            proxyList.add(new String[]{"111.56.32.72","80"});
+            site.setHttpProxyPool(proxyList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        List<String[]> proxyList = Lists.newArrayList();
 //        Lists.newArrayList().add(new String[]{"127.0.0.1","8888"});
 //        site.setHttpProxyPool(proxyList);

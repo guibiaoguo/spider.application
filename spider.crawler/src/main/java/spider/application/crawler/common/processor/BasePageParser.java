@@ -1,10 +1,8 @@
 package spider.application.crawler.common.processor;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -12,24 +10,25 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spider.application.crawler.common.download.SpiderPageDownloader;
 import spider.application.crawler.common.utils.CrawlerRequestUtils;
 import spider.application.crawler.common.utils.DateUtils;
+import spider.application.ocr.main.OCRHelper;
+import spider.application.ocr.util.ImageUtil;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.downloader.Downloader;
 import us.codecraft.webmagic.selector.Json;
-import us.codecraft.webmagic.selector.JsonPathSelector;
 import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.selector.Selectable;
 import us.codecraft.webmagic.utils.HttpConstant;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -223,17 +222,24 @@ public abstract class BasePageParser implements PageParser {
                     tmpSelectable = new PlainText(parVal[0].toString());
                 } else if (StringUtils.startsWith(parameters[i], "saveFile")) {
                     CloseableHttpClient httpClient = page.getResultItems().get("$httpclient");
-
-                    HttpGet httpget = new HttpGet(tmpSelectable.get());
-                    httpget.setConfig(RequestConfig.custom().setProxy(new HttpHost("127.0.0.1", 8888)).build());
-                    httpget.setHeader(new BasicHeader("Cookie", "proxy_token=" + page.getHtml().xpath("//script").regex("proxy_token=(.*?);")));
-                    CloseableHttpResponse response = httpClient.execute(httpget);
-                    String tmp = EntityUtils.toString(response.getEntity());
-                    String tmpfile = getClass().getResource("/").getPath() + DateUtils.currtimeToString8() + "/" + select[0] + "_" + DateUtils.currtimeToString17() + select[1];
-//                            Files.createParentDirs(new File(tmpfile));
-//                            Files.write(bytes,new File(tmpfile));
-                    tmpSelectable = new PlainText(tmp);
-
+//                    HttpGet httpget = new HttpGet(tmpSelectable.get());
+//                    httpget.setConfig(RequestConfig.custom().setProxy(new HttpHost("127.0.0.1", 8888)).build());
+//                    httpget.setHeader(new BasicHeader("Cookie", "proxy_token=" + page.getHtml().xpath("//script").regex("proxy_token=(.*?);")));
+//                    CloseableHttpResponse response = httpClient.execute(httpget);
+                    byte[] bytes = saveFile(httpClient,tmpSelectable.get(),ImmutableMap.of("Cookie","proxy_token=" + page.getHtml().xpath("//script").regex("proxy_token=(.*?);")));
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    tmpSelectable = new PlainText(objectMapper.writeValueAsString(bytes));
+                } else if (StringUtils.startsWith(parameters[i], "saveAndOCRFile")) {
+                    CloseableHttpClient httpClient = page.getResultItems().get("$httpclient");
+                    byte[] bytes = saveFile(httpClient,tmpSelectable.get(),ImmutableMap.of("Cookie","proxy_token=" + page.getHtml().xpath("//script").regex("proxy_token=(.*?);")));
+                    String file = getClass().getResource("/").getPath() + DateUtils.currtimeToString8() + "/" + select[0] + "_" + DateUtils.currtimeToString17() + select[1];
+                    Files.createParentDirs(new File(file));
+                    Files.write(bytes, new File(file));
+                    String tmpFileName = ImageUtil.printImage(file,-16777216);
+                    File tmpFile = new File(tmpFileName);
+                    String text = new OCRHelper().recognizeText(tmpFile).trim();
+                    tmpSelectable = new PlainText(text);
+                    tmpFile.delete();
                 } else {
                     //获取方法方法名调用
                     method = tmpSelectable.getClass().getMethod(StringUtils.substring(parameters[i], 0, parameters[i].indexOf("(")), clses.toArray(new Class[clses.size()]));
@@ -248,15 +254,26 @@ public abstract class BasePageParser implements PageParser {
         return tmpSelectable;
     }
 
-    public Map configResolveToMap(Selectable selectable, Collection<Map> configMaps, Page page) {
-        Map multimap = Maps.newHashMap();
-        Iterator<Map> iterator = configMaps.iterator();
-        while (iterator.hasNext()) {
-            Map targetTask = iterator.next();
-            String table = targetTask.get("table") != null ? targetTask.get("table").toString() : null;
-            String express = targetTask.get("express").toString();
-            multimap.put(targetTask.get("key"), configSingleResolve(selectable, express, page).get());
+    private byte[] saveFile(CloseableHttpClient httpClient,String url,Map<String,String> headers) throws Exception{
+        HttpGet httpget = new HttpGet(url);
+        httpget.setConfig(RequestConfig.custom().setProxy(new HttpHost("127.0.0.1", 8888)).build());
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            httpget.setHeader(new BasicHeader(header.getKey(),header.getValue().toString()));
         }
+        CloseableHttpResponse response = httpClient.execute(httpget);
+        byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+        return bytes;
+    }
+    public Map configResolveToMap(Selectable selectable, Map<String, Object> configMaps, Page page) {
+        Map multimap = Maps.newHashMap();
+        String table = configMaps.get("$table") != null ? configMaps.get("$table").toString() : null;
+        for (Map.Entry<String, Object> configMap : configMaps.entrySet()) {
+            if (!StringUtils.startsWith(configMap.getKey(), "$")) {
+                String express = configMap.getValue().toString();
+                multimap.put(configMap.getKey(), configSingleResolve(selectable, express, page).get());
+            }
+        }
+
         return multimap;
     }
 
@@ -264,7 +281,7 @@ public abstract class BasePageParser implements PageParser {
         Multimap multimap = ArrayListMultimap.create();
         Request request = page.getRequest();
         String contentType = target.get("contentType").iterator().next().toString();
-        Collection<Map> targetTasks = target.get("targetTasks");
+//        Collection<Map> targetTasks = target.get("targetTasks");
         Selectable selectable = null;
         Method method;
         CloseableHttpClient httpClient = page.getResultItems().get("$httpclient");
@@ -273,23 +290,23 @@ public abstract class BasePageParser implements PageParser {
         } else {
             selectable = page.getJson();
         }
-        Iterator<List<Map>> tasks = target.get("tasks").iterator();
-        while(tasks.hasNext()) {
-            List<Map> tmpTasks = tasks.next();
-            for(Map tmpTask:tmpTasks) {
-                String module = tmpTask.get("$module").toString();
-                selectable = configSingleResolve(selectable,module,page);
-                String table = tmpTask.get("$table").toString();
-                String flag = tmpTask.get("$flag").toString();
+        Iterator<Map> tasks = target.get("tasks").iterator();
+        while (tasks.hasNext()) {
+            Map<String, Object> tmpTasks = tasks.next();
 
-                for (Selectable sel : selectable.nodes()) {
-                    Map map = configResolveToMap(sel, targetTasks, page);
-                    if(StringUtils.equalsIgnoreCase(flag,"1"))
-                        multimap.put(table,map);
-                    else
-                        page.addTargetRequest(CrawlerRequestUtils.createRequest(target.get("url").iterator().next().toString(), target.get("method").iterator().next().toString(), map));
-                }
+            String module = tmpTasks.get("$module").toString();
+            selectable = configSingleResolve(selectable, module, page);
+            String table = tmpTasks.get("$table").toString();
+            String flag = tmpTasks.get("$flag").toString();
+
+            for (Selectable sel : selectable.nodes()) {
+                Map map = configResolveToMap(sel, tmpTasks, page);
+                if (StringUtils.equalsIgnoreCase(flag, "1"))
+                    multimap.put(table, map);
+                else
+                    page.addTargetRequest(CrawlerRequestUtils.createRequest(target.get("url").iterator().next().toString(), target.get("method").iterator().next().toString(), map));
             }
+
         }
 //        Iterator<Map> iterator = targetTasks.iterator();
 

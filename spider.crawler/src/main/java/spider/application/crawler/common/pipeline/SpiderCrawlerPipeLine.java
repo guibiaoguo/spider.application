@@ -39,9 +39,9 @@ public class SpiderCrawlerPipeLine implements Pipeline {
 //
         CrawlerSearchResult data = resultItems.get("result");
         Multimap multimap = data.getData();
-        Iterator< Map<String,List<String>>> iterator = multimap.get("tb_kuaidaili").iterator();
-        Map<String,List<String>> map = iterator.next();
-        System.out.println(map.get("ip").get(0) + ":");
+        Iterator<Map> iterator = multimap.get("tb_mayidaili").iterator();
+        Map map = iterator.next();
+        System.out.println(map.get("ip") + ":");
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String tmpfile = getClass().getResource("/").getPath() + DateUtils.currtimeToString8() + "/" + DateUtils.currtimeToString12();
