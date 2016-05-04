@@ -5,5 +5,5 @@ target/
 *.epoch
 *.log
 *.iml
-.idea
-.svn
+.idea/
+.svn/
