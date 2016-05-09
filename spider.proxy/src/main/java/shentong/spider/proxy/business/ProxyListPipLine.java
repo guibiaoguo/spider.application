@@ -4,19 +4,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import shentong.spider.crawler.model.CrawlerSearchResult;
 import shentong.spider.proxy.model.ProxyPool;
 import shentong.spider.proxy.utils.HttpUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +23,20 @@ import java.util.Map;
 @Component
 public class ProxyListPipLine extends ConfigListBasePipeLine{
 
-    private List<String[]> proxys;
+    @Autowired
+    private SqlSessionTemplate sqlSessionTemplate;
 
     @Autowired
     private ProxyPool proxyPool;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public boolean processInternal(CrawlerSearchResult searchResult) {
         Multimap multimap = searchResult.getData();
         Iterator<Map> iterator = multimap.get("tb_mayidaili").iterator();
         HttpUtil httpUtil = HttpUtil.getInstance();
-        proxys = Lists.newArrayList();
+        List<Map> proxys = Lists.newArrayList();
         while (iterator.hasNext()) {
             Map proxy = iterator.next();
             HttpResponse response = null;
@@ -47,29 +46,30 @@ public class ProxyListPipLine extends ConfigListBasePipeLine{
                 if(StringUtils.isNotEmpty(port))
                     response = httpUtil.doGet("http://www.haosou.com",null,null,proxy);
                 if(response != null && response.getStatusLine().getStatusCode() == 200) {
-                    proxys.add(new String[] {proxy.get("ip").toString().trim(),proxy.get("port").toString().trim()});
+                    proxys.add(proxy);
                 } else {
 
                 }
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                logger.info(e.getMessage());
             }
 
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String content = objectMapper.writeValueAsString(proxys);
-            File dataFile = new File("d:/123456");
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile, true));
-            bufferedWriter.write(content + "\n");
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(proxys.size() > 0) {
+            logger.info("更新" + proxys.size() + "条数据");
+            sqlSessionTemplate.insert("addProxy",proxys);
         }
-        proxyPool.getProxyQueue(proxys);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            String content = objectMapper.writeValueAsString(proxys);
+//            File dataFile = new File("d:/123456");
+//            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(dataFile, true));
+//            bufferedWriter.write(content + "\n");
+//            bufferedWriter.flush();
+//            bufferedWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return false;
     }
 
@@ -83,11 +83,4 @@ public class ProxyListPipLine extends ConfigListBasePipeLine{
         return "MaYiProxy";
     }
 
-    public List<String[]> getProxys() {
-        return proxys;
-    }
-
-    public void setProxys(List<String[]> proxys) {
-        this.proxys = proxys;
-    }
 }

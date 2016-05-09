@@ -30,7 +30,7 @@ import java.util.*;
  * Created by Administrator on 2016/4/27.
  */
 @Component
-public class SpiderConfigCrawlerService implements IBackListSearchService{
+public class SpiderConfigCrawlerService implements IBackListSearchService {
 
     private static Logger logger = LoggerFactory.getLogger(SpiderConfigCrawlerService.class);
 
@@ -39,7 +39,7 @@ public class SpiderConfigCrawlerService implements IBackListSearchService{
 
     @Override
     public void batchFetch(String batchId, Multimap keyList) {
-        Map<String,Collection> job = keyList.asMap();
+        Map<String, Collection> job = keyList.asMap();
         String sleepRandom = job.get("sleepRandom").iterator().next().toString();
         String domain = job.get("domain").iterator().next().toString();
         String charset = job.get("charset").iterator().next().toString();
@@ -61,29 +61,31 @@ public class SpiderConfigCrawlerService implements IBackListSearchService{
                 .setCycleRetryTimes(Integer.parseInt(cycleRetryTime))
                 .setSleepTime(Integer.parseInt(sleepTime))
                 .setTimeOut(Integer.parseInt(timeOut))
-                .setUserAgent(userAgent)
-                ;
+                .setUserAgent(userAgent);
+        List<String[]> proxys = (List<String[]>) keyList.get("proxy");
+        if (proxys.size() > 0)
+            site.setHttpProxyPool(proxys);
 //        site.getHttpProxyPool().enable(true);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            List<String> lines = Files.readLines(new File("d:/123456"), Charsets.UTF_8);
-            List<String[]> proxyList = Lists.newArrayList();
-            for (String line:lines) {
-                List<ArrayList<String>> proxys = objectMapper.readValue(line,List.class);
-                for (ArrayList proxy:proxys) {
-                    proxyList.add((String[]) proxy.toArray(new String[proxy.size()]));
-                }
-            }
-            site.setHttpProxyPool(proxyList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            List<String> lines = Files.readLines(new File("d:/123456"), Charsets.UTF_8);
+//            List<String[]> proxyList = Lists.newArrayList();
+//            for (String line:lines) {
+//                List<ArrayList<String>> proxys = objectMapper.readValue(line,List.class);
+//                for (ArrayList proxy:proxys) {
+//                    proxyList.add((String[]) proxy.toArray(new String[proxy.size()]));
+//                }
+//            }
+//            site.setHttpProxyPool(proxyList);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        List<String[]> proxyList = Lists.newArrayList();
 //        Lists.newArrayList().add(new String[]{"127.0.0.1","8888"});
 //        site.setHttpProxyPool(proxyList);
         Collection<Map> headers = keyList.get("header");
         Iterator<Map> iterator = headers.iterator();
-        while ( iterator.hasNext() ) {
+        while (iterator.hasNext()) {
             Map<String, Object> header = iterator.next();
             for (Map.Entry<String, Object> entry : header.entrySet()) {
                 site.addHeader(entry.getKey(), entry.getValue().toString());
@@ -96,16 +98,15 @@ public class SpiderConfigCrawlerService implements IBackListSearchService{
         SpiderPageDownloader spiderPageDownloader = new SpiderPageDownloader();
 
         Spider spider = Spider
-                .create(new SpiderPageProcessor(site,batchId,requests,keyList))
+                .create(new SpiderPageProcessor(site, batchId, requests, keyList))
                 .setDownloader(spiderPageDownloader)
                 .setPipelines(pipelineList)
                 .setExitWhenComplete(true)
-                .thread(Integer.parseInt(thread))
-                ;
+                .thread(Integer.parseInt(thread));
         iterator = requests.iterator();
-        while ( iterator.hasNext() ) {
+        while (iterator.hasNext()) {
             Map request = iterator.next();
-            requestList.add(CrawlerRequestUtils.createRequest(SEARCH_PAGE_TMP, method,request));
+            requestList.add(CrawlerRequestUtils.createRequest(SEARCH_PAGE_TMP, method, request));
 
         }
         spider.addRequest(requestList.toArray(new Request[]{}));

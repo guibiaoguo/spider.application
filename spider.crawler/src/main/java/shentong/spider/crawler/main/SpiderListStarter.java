@@ -18,7 +18,6 @@ public class SpiderListStarter {
 
     @Autowired
     private List<IBackListSearchService> backListSearchList;
-
     private ExecutorService executorService;
 
     public void startCrawler(final String batchId, final Multimap keyList) {
@@ -26,6 +25,7 @@ public class SpiderListStarter {
             executorService = Executors.newFixedThreadPool(10);
         for (final IBackListSearchService backListSearch : backListSearchList) {
             //TODO delete it
+//            backListSearch.batchFetch(batchId,keyList);
 //            if(!backListSearch.getClass().getName().contains("XIN")) continue;
             executorService.submit(new Runnable() {
                 @Override
@@ -33,6 +33,11 @@ public class SpiderListStarter {
                     backListSearch.batchFetch(batchId,keyList);
                 }
             });
+            try {
+                Thread.sleep(100000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
     }

@@ -106,7 +106,7 @@
         <appender-ref ref="DEBUG-OUT"/>
     </logger>
 
-    <logger name="skynet.mybatis.mapper" level="DEBUG" additivity="false">
+    <logger name="mapper" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="MYBATIS-OUT"/>
     </logger>

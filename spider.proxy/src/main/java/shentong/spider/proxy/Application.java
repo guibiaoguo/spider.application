@@ -31,6 +31,7 @@ public class Application {
     private String username;
     @Value("${datasource.primary.password}")
     private String password;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -71,7 +72,7 @@ public class Application {
         config.setJdbcUrl(url);
         config.setUsername(username);
         config.setPassword(password);
-
+//        config.setAutoCommit(false);
         config.addDataSourceProperty("useUnicode", "true");
         config.addDataSourceProperty("characterEncoding", "utf8");
         config.addDataSourceProperty("cachePrepStmts", "true");

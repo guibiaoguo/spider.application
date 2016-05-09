@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ProxyMapper">
+    <insert id="addProxy" parameterType="hashMap">
+        INSERT INTO proxy ( ip, port, anonymity, country, address, connection_time, release_time) VALUES
+        <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+            (#{item.ip}, #{item.port}, #{item.anonymity}, #{item.country}, #{item.address}, #{item.connection_time},
+            #{item.release_time})
+        </foreach>
+    </insert>
+    <select id="selectProxy" resultType="hashMap">
+        SELECT * from proxy
+    </select>
+    <delete id="deleteProxy" parameterType="hashMap">
+        DELETE from proxy  where id=#{id}
+    </delete>
+</mapper>

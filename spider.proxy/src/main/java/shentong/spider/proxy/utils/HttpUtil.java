@@ -130,7 +130,7 @@ public class HttpUtil {
     private HttpUtil() {
         //设置连接参数
         connConfig = ConnectionConfig.custom().setCharset(Charset.forName(defaultEncoding)).build();
-        socketConfig = SocketConfig.custom().setSoTimeout(100000).build();
+        socketConfig = SocketConfig.custom().setSoTimeout(5000).build();
         RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
         plainSF = new PlainConnectionSocketFactory();
         registryBuilder.register("http", plainSF);
@@ -263,8 +263,8 @@ public class HttpUtil {
         HttpHost proxy = new HttpHost(map[0].get("ip").toString().trim(),Integer.parseInt(map[0].get("port").toString().trim()), "http");
         RequestConfig requestConfig = RequestConfig.custom()
                 .setProxy(proxy)
-                .setConnectTimeout(50000).setConnectionRequestTimeout(20000)
-                .setSocketTimeout(100000)
+                .setConnectTimeout(5000).setConnectionRequestTimeout(5000)
+                .setSocketTimeout(5000)
                 .build();
 
         gm.setConfig(requestConfig);
@@ -343,8 +343,8 @@ public class HttpUtil {
 
         //设置超时
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(50000).setConnectionRequestTimeout(20000)
-                .setSocketTimeout(50000).build();
+                .setConnectTimeout(5000).setConnectionRequestTimeout(5000)
+                .setSocketTimeout(5000).build();
         pm.setConfig(requestConfig);
 
         return client.execute(pm);

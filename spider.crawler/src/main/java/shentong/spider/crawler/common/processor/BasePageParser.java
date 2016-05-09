@@ -256,7 +256,7 @@ public abstract class BasePageParser implements PageParser {
 
     private byte[] saveFile(CloseableHttpClient httpClient,String url,Map<String,String> headers) throws Exception{
         HttpGet httpget = new HttpGet(url);
-        httpget.setConfig(RequestConfig.custom().setProxy(new HttpHost("127.0.0.1", 8888)).build());
+//        httpget.setConfig(RequestConfig.custom().setProxy(new HttpHost("127.0.0.1", 8888)).build());
         for (Map.Entry<String, String> header : headers.entrySet()) {
             httpget.setHeader(new BasicHeader(header.getKey(),header.getValue().toString()));
         }
@@ -264,6 +264,7 @@ public abstract class BasePageParser implements PageParser {
         byte[] bytes = EntityUtils.toByteArray(response.getEntity());
         return bytes;
     }
+
     public Map configResolveToMap(Selectable selectable, Map<String, Object> configMaps, Page page) {
         Map multimap = Maps.newHashMap();
         String table = configMaps.get("$table") != null ? configMaps.get("$table").toString() : null;

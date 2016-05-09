@@ -29,7 +29,7 @@ public abstract class ConfigListBasePipeLine implements ISpiderPipeLine {
         try {
             if (data != null && data.size() > 0) {
                 processInternal(searchResult);
-                logger.info(String.format("%s处理了属于批次%s的%s条数据", getCanDealIdentifier(), searchResult.getBatchId(), data.size()));
+                logger.info(String.format("%s处理了属于批次%s的%s条数据", getCanDealIdentifier(), searchResult.getBatchId(), data.entries().size()));
             }
         }catch ( Exception e) {
             e.printStackTrace();

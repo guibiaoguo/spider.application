@@ -67,4 +67,20 @@
             <version>2.4.1</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>Opensymphony Releases</id>
+            <url>https://oss.sonatype.org/content/repositories/opensymphony-releases</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>http://repo.maven.apache.org/maven2/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

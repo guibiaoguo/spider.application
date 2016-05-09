@@ -1,13 +1,11 @@
 package shentong.spider.proxy.main.maiyidaili;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMap;
+
 import com.google.common.collect.Multimap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import shentong.spider.crawler.main.spider.SpiderConfigCrawlerService;
 import shentong.spider.proxy.business.IProxyList;
-import us.codecraft.webmagic.utils.HttpConstant;
 
 import java.util.UUID;
 
